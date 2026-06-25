@@ -22,14 +22,9 @@ public class Player extends Personagem implements Movel{
     
     @Override
     public void mover(int x, int y, Mapa mapa){
-        if(x == super.getX() && y == super.getY()){
-            System.out.println("Vocês está tentando mover para a posição em que está");
-        }else{
+            mapa.setCelula(this.getX(), this.getY(), null);
             this.setPosition(x, y);
-        }
-        
-        
-        
+            mapa.setCelula(x, y, this);
     }
     
     public int getPercepcao(){

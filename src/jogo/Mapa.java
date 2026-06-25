@@ -1,16 +1,18 @@
 package jogo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import personagens.*;
 
 public class Mapa {
     private int tamanho;
-    private Entidade[][] entidades;
+    private Entidade[][] celulas;
     private Random random;
     
     public Mapa(int tamanho){
         this.tamanho = tamanho;
-        entidades = new Entidade[tamanho][tamanho];
+        celulas = new Entidade[tamanho][tamanho];
         random = new Random();
     }
     
@@ -18,8 +20,8 @@ public class Mapa {
         
         for(int i = 0; i < tamanho; i++){
             for(int j = 0; j < tamanho; j++){
-                if(entidades[i][j] != null){
-                    System.out.print("| " + entidades[i][j].getSimbolo() + " ");
+                if(celulas[i][j] != null){
+                    System.out.print("| " + celulas[i][j].getSimbolo() + " ");
                 } else {
                     System.out.print("|   ");
                 }
@@ -28,29 +30,31 @@ public class Mapa {
         }
     }
     
+    public int getTamanho(){
+        return this.tamanho;
+    }
+    
     public Entidade getCelula(int x, int y){
-        return entidades[x][y];
+        return celulas[y][x];
     }
     
     public void setCelula(int x, int y, Entidade entidade){
-        entidades[x][y] = entidade;
+        celulas[y][x] = entidade;
     }
     
     public void gerar(){
         int numCelulas = tamanho * tamanho;
         int numParedes = random.nextInt(numCelulas - (int) (numCelulas * 0.85))+tamanho;
-        
-        
-        entidades[0][0] = new Player("Player", 0, 0, 5, 3);
-        entidades[tamanho-1][tamanho-1] = new TRex(tamanho-1,tamanho-1);
+               
+        setCelula(0,0,new Player("Player", 0, 0, 5, 3));   
+        setCelula(tamanho-1, tamanho-1, new TRex(tamanho-1, tamanho-1));
         
         while(numParedes > 0){
             int x = random.nextInt(tamanho);
             int y = random.nextInt(tamanho);
-            //System.out.println("(" + x + "," + y + ")");
-            //System.out.println(numParedes);
-            if(entidades[x][y] == null){
-                entidades[x][y] = new Entidade("Parede", x, y, '█');
+
+            if(celulas[x][y] == null){
+                setCelula(x,y,new Entidade("Parede", x, y, '█'));
                 numParedes--;
             }
         }
@@ -58,7 +62,8 @@ public class Mapa {
         alocarDinossauro("Compsognato", 2);
         alocarDinossauro("Velociraptor", 2);
         alocarDinossauro("Troodonte", 5);
-
+        
+        imprimir();
     }
     
     private void alocarDinossauro(String tipo, int quantidade){
@@ -67,34 +72,93 @@ public class Mapa {
             int x = 0;
             int y = 0;
             
-            while(entidades[x][y] != null){
+            while(getCelula(x,y) != null){
                 x = random.nextInt(tamanho);
                 y = random.nextInt(tamanho);
             }
             
             switch(tipo){
                 case "Compsognato":
-                    entidades[x][y] = new Compsognato(x,y);
+                    setCelula(x,y,new Compsognato(x,y));
                     break;
                 case "Velociraptor":
-                    entidades[x][y] = new Velociraptor(x,y);
+                    setCelula(x,y,new Velociraptor(x,y));
                     break;
                 case "Troodonte":
-                    entidades[x][y] = new Troodonte(x,y);   
+                    setCelula(x,y,new Troodonte(x,y));
             }
-        
+            
         }
     }
     
     public void atualizarMapa(){
-        Entidade entidade;
-        
-         for(int i = 0; i < tamanho; i++){
-             for(int j = 0; j < tamanho; j++){
-                 if(entidades[i][j].getSimbolo() == 'P'){
-                     entidade = entidades[i][j];
-                 }
-             }
-         }
+        imprimir();
     }
+    
+    public List<Personagem> getPersonagens(){
+        List<Personagem> personagens = new ArrayList<>();
+        
+        for(int i = 0; i < tamanho; i++){
+            for(int j = 0; j < tamanho; j++){
+                if(celulas[i][j] != null && !celulas[i][j].getNome().equals("Parede")){
+                    personagens.add((Personagem) celulas[i][j]);
+                }
+            }
+        }
+        
+        return personagens;
+    }
+    
+    public Entidade moverPlayer(Player player, char direcao){
+        int posAlvoX = player.getX();
+        int posAlvoY = player.getY();
+        
+        switch(direcao){
+            case 'a':
+                posAlvoX--;
+                break;
+            case 'd':
+                posAlvoX++;
+                break;
+            case 's':
+                posAlvoY++;
+                break;
+            case 'w':
+                posAlvoY--;
+                break;
+            default:
+                System.out.println("Escolha inválida");
+                return null;
+                //break;
+            }
+        
+        boolean isFree = validarPosicaoDestino(posAlvoX, posAlvoY);
+        
+        if(isFree){
+            player.mover(posAlvoX, posAlvoY, this);
+            return null; 
+        }
+        
+        return getCelula(posAlvoX,posAlvoY);
+    }
+    
+   private boolean validarPosicaoDestino(int x, int y){
+       /*
+       if(getCelula(x,y) == null){
+           return null;
+       }
+       
+       if(getCelula(x,y) != null){
+           for(Personagem personagem: personagens){
+               if(personagem.equals(getCelula(x,y))){
+                   return personagem;
+               }
+           }
+       }*/
+       
+       if(getCelula(x,y) == null){
+           return true;
+       }
+       return false;
+   }
 }

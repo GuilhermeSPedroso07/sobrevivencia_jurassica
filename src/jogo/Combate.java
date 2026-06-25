@@ -17,7 +17,7 @@ public class Combate {
         this.dado = new Dado();
     }
     
-    public void iniciarCombate(Player player, Dinossauro dino){
+    public boolean iniciarCombate(Player player, Dinossauro dino){
         int armaEscolhida = 1;
         int turno = 1;
         
@@ -30,6 +30,8 @@ public class Combate {
             System.out.println(player.getNome() + " " + player.getVida() + "/" + player.getVidaMaxima());
             turno++;
         }
+        
+        return player.estaVivo() && !dino.estaVivo();
     }
     
     private void executarAtaque(Player atacante, Dinossauro alvo, int arma){

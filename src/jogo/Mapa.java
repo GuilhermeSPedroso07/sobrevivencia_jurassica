@@ -32,6 +32,10 @@ public class Mapa {
         return entidades[x][y];
     }
     
+    public void setCelula(int x, int y, Entidade entidade){
+        entidades[x][y] = entidade;
+    }
+    
     public void gerar(){
         int numCelulas = tamanho * tamanho;
         int numParedes = random.nextInt(numCelulas - (int) (numCelulas * 0.85))+tamanho;

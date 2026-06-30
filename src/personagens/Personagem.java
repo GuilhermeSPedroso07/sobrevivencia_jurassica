@@ -16,6 +16,10 @@ public abstract class Personagem extends Entidade{
         this.vida -= dano;
     }
     
+    public void curar(int quantidade){
+        this.vida = Math.min(this.vida + quantidade, this.vidaMaxima);
+    }
+    
     public boolean estaVivo(){
         return this.vida > 0;
     }

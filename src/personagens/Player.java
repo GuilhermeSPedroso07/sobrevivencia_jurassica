@@ -39,6 +39,39 @@ public class Player extends Personagem implements Movel{
         return this.inventario.temBastao();
     }
     
+    public void pegarDardo(){
+        inventario.adicionarDardo();
+    }
+    
+    public boolean temDardos(){
+        return inventario.temDardos();
+    }
+    
+    public int getQuantidadeDardos(){
+        return inventario.getDardos();
+    }
+    
+    public boolean usarDardo(){
+        return inventario.usarDardo();
+    }
+    
+    public void pegarKitMedico(){
+        inventario.adicionarKitMedico();
+    }
+    
+    public boolean temKitMedico(){
+        return inventario.temKitMedico();
+    }
+    
+    /** Usa um kit médico do inventário, recuperando pontos de vida. Retorna false se não houver kit. */
+    public boolean usarKitMedico(){
+        if(inventario.usarKitMedico()){
+            curar(3);
+            return true;
+        }
+        return false;
+    }
+    
     public boolean esquivar(Dado dado){
         int testePercepcao = dado.rolar(3);
         return testePercepcao <= this.percepcao;
